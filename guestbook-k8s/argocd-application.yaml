@@ -1,15 +1,19 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: guestbook-stack
+  name: guestbook
   namespace: argocd
 spec:
   generators:
     - list:
         elements:
-          - name: infra
+          - name: guestbook-infra
+            appGroup: guestbook
+            component: infra
             wave: "-1"
-          - name: app
+          - name: guestbook-app
+            appGroup: guestbook
+            component: app
             wave: "0"
   template:
     metadata:
@@ -21,10 +25,10 @@ spec:
       source:
         repoURL: https://github.com/alexz-ops/argocd.git
         targetRevision: HEAD
-        path: "guestbook-k8s/{{name}}"
+        path: "{{appGroup}}-k8s/{{component}}"
       destination:
         server: https://kubernetes.default.svc
-        namespace: guestbook
+        namespace: "{{appGroup}}"
       syncPolicy:
         automated:
           prune: true
