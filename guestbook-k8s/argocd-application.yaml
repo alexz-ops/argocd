@@ -8,21 +8,18 @@ spec:
     - list:
         elements:
           - name: namespace
-            wave: "-1"
-            destNamespace: default  # <-- Deploy the namespace manifest from a default context
+            wave: "-1"      # Step 1: Creates Namespace first
           - name: redis-master
-            wave: "0"
-            destNamespace: guestbook
+            wave: "0"       # Step 2: Creates Redis master
           - name: redis-slave
-            wave: "0"
-            destNamespace: guestbook
+            wave: "0"       # Step 2: Creates Redis slave alongside master
           - name: guestbook
-            wave: "1"
-            destNamespace: guestbook
+            wave: "1"       # Step 3: Creates App after Redis is up
   template:
     metadata:
       name: "{{name}}"
       annotations:
+        # This tells ArgoCD to order the sync of the generated Application objects
         argocd.argoproj.io/sync-wave: "{{wave}}"
     spec:
       project: default
@@ -32,10 +29,10 @@ spec:
         path: "guestbook-k8s/{{name}}"
       destination:
         server: https://kubernetes.default.svc
-        namespace: "{{destNamespace}}"  # <-- Dynamically set per element
+        namespace: guestbook
       syncPolicy:
         automated:
           prune: true
           selfHeal: true
         syncOptions:
-          - CreateNamespace=true
+            - CreateNamespace=true
