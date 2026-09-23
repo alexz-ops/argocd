@@ -16,7 +16,7 @@
         source:
           repoURL: https://github.com/alexz-ops/argocd.git 
           targetRevision: HEAD
-          path: guestbook-k8s
+          path: .
         destination:
           server: https://kubernetes.default.svc
           namespace: guestbook
