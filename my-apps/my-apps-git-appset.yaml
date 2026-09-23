@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: my-git-apps
+  namespace: argocd
+spec:
+  generators:
+    - git:
+        repoURL: https://github.com/alexz-ops/argocd.git
+        revision: HEAD
+        directories:
+          - path: '*'
+  template:
+    metadata:
+      name: '{{name}}'
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/alexz-ops/argocd.git
+        targetRevision: HEAD
+        path: 'my-apps/{{name}}/k8s'
+      destination:
+        server: minikube
+        namespace: '{{name}}'

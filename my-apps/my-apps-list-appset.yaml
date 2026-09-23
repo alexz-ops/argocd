@@ -1,0 +1,36 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: my-list-apps
+  namespace: argocd
+spec:
+  generators:
+    - list:
+        elements:
+          - name: app1
+            cluster: https://kubernetes.default.svc
+            namespace: app1
+          - name: app2
+            cluster: https://kubernetes.default.svc
+            namespace: app2
+          - name: app3
+            cluster: https://kubernetes.default.svc
+            namespace: app3
+  template:
+    metadata:
+      name: '{{name}}'
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/alexz-ops/argocd.git
+        targetRevision: HEAD
+        path: 'my-apps/{{name}}/k8s'
+      destination:
+        server: '{{cluster}}'
+        namespace: '{{namespace}}'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
