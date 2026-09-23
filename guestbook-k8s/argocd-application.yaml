@@ -8,7 +8,7 @@ spec:
     - list:
         elements:
           - name: namespace
-            wave: "-10"      # Step 1: Creates Namespace first
+            wave: "-1"      # Step 1: Creates Namespace first
           - name: redis-master
             wave: "0"       # Step 2: Creates Redis master
           - name: redis-slave
