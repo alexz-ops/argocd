@@ -9,9 +9,9 @@ spec:
         elements:
           - name: namespace
             wave: "-1"      # Step 1: Creates Namespace first
-          - name: redis-master
+          - name: redis/redis-master
             wave: "0"       # Step 2: Creates Redis master
-          - name: redis-slave
+          - name: redis/redis-slave
             wave: "0"       # Step 2: Creates Redis slave alongside master
           - name: guestbook
             wave: "1"       # Step 3: Creates App after Redis is up
