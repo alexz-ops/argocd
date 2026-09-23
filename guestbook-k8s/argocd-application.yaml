@@ -1,26 +1,36 @@
-  apiVersion: argoproj.io/v1alpha1
-  kind: ApplicationSet
-  metadata:
-    name: guestbook
-    namespace: argocd
-  spec:
-    generators:
-      - list:
-          elements:
-            - name: guestbook
-    template:
-      metadata:
-        name: guestbook
-      spec:
-        project: default
-        source:
-          repoURL: https://github.com/alexz-ops/argocd.git 
-          targetRevision: HEAD
-          path: guestbook-k8s
-        destination:
-          server: https://kubernetes.default.svc
-          namespace: guestbook
-        syncPolicy:
-          automated:
-            prune: true
-            selfHeal: true
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: guestbook-stack
+  namespace: argocd
+spec:
+  generators:
+    - list:
+        elements:
+          - name: namespace
+            wave: "-1"      # Step 1: Creates Namespace first
+          - name: redis-master
+            wave: "0"       # Step 2: Creates Redis master
+          - name: redis-slave
+            wave: "0"       # Step 2: Creates Redis slave alongside master
+          - name: guestbook
+            wave: "1"       # Step 3: Creates App after Redis is up
+  template:
+    metadata:
+      name: "{{name}}"
+      annotations:
+        # This tells ArgoCD to order the sync of the generated Application objects
+        argocd.argoproj.io/sync-wave: "{{wave}}"
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/alexz-ops/argocd.git
+        targetRevision: HEAD
+        path: "guestbook-k8s/{{name}}"
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: guestbook
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
