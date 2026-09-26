@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: https://github.com/alexz-ops/argocd.git
     targetRevision: HEAD
-    path: argocd-app-of-apps/apps
+    path: argocd-app-of-apps/charts/parent-app
   destination:
     server: https://kubernetes.default.svc
     namespace: argocd
